@@ -721,15 +721,14 @@
             <hr style="border-color: var(--border-color); margin: 1rem 0;">
 
             <h4>Send Inquiry Directly to Email Inbox</h4>
-            <form id="inquiryForm" action="https://formspree.io/f/myeypnpy" method="POST" style="margin-top: 1rem;">
-                <input type="hidden" name="Product_Requested" id="formspreeProductField">
-                <input type="text" name="_gotcha" class="hp-field" tabindex="-1" autocomplete="off">
-                <input type="text" name="Client_Name" placeholder="Your Name" required maxlength="100">
-                <input type="email" name="Client_Email" placeholder="Your Email Address" required maxlength="150">
-                <textarea name="Message" rows="3" placeholder="Specify custom dimensions or requests..." required maxlength="1000"></textarea>
-                <button type="submit" class="btn-gold">Send Inquiry to Ijemen</button>
-                <p class="form-status" id="inquiryStatus"></p>
-            </form>
+          <form id="formspreeInquiryForm" action="https://formspree.io/f/myeypnpy" method="POST" style="margin-top: 1rem;">
+    <input type="hidden" name="Product_Requested" id="formspreeProductField">
+    <input type="text" name="Client_Name" placeholder="Your Name" required>
+    <input type="email" name="Client_Email" placeholder="Your Email Address" required>
+    <textarea name="Message" rows="3" placeholder="Specify custom dimensions or requests..." required></textarea>
+    <button type="submit" class="btn-gold">Send Inquiry to Ijemen</button>
+</form>
+            
 
             <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
 
@@ -799,6 +798,36 @@
   appId: "1:249129914755:web:489ec3e8c4170ecc7de6b6",
   measurementId: "G-D8MMLKY78V"
 };
+        // Handles Formspree submission smoothly without redirecting, then clears the inputs
+document.getElementById('formspreeInquiryForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const form = this;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    submitBtn.innerText = "Sending Inquiry...";
+    submitBtn.disabled = true;
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+            form.reset(); // Clears all input and textarea fields
+            alert("Inquiry successfully sent! The Ijemen team will reach out to you shortly.");
+            closeModal(); // Optionally close the modal upon success
+        } else {
+            alert("There was an issue sending your inquiry. Please try again or reach out on WhatsApp.");
+        }
+    } catch (error) {
+        alert("Network error. Please check your connection and try again.");
+    } finally {
+        submitBtn.innerText = "Send Inquiry to Ijemen";
+        submitBtn.disabled = false;
+    }
+});
 
         let db = null;
         let auth = null;
